@@ -61,65 +61,13 @@ int shapeFoo<Polygon, Polygon>(const Polygon &a, float x, bool y,
   return -1;
 }
 
-// void funcTest1(int) { println("int"); }
-// void funcTest1(float) { println("float"); }
-// void funcTest1(bool) { println("bool"); }
-
-// float barbar(int a) { return a + 0.5f; }
-//  using barbar_t = void (*)(int);
-//
-//  barbar_t barA() { return &barbar; }
-//  barbar_t barB() {
-//    return [](int) { return; };
-//  }
-// template <float (*F)(int)> float barC(int a) { return F(a); }
-// template <float (*F)(int)> float barD(int a) {
-//   const auto f = []<auto F = F>(int a) { return F(a); };
-//   return f(a);
-// }
-
-template <typename T> struct DispatchHelper;
-template <typename... Ts> struct DispatchHelper<TypeRegistrar<Ts...>> {
-  // static void foo() {
-  //   std::string out = "";
-  //   ((out += typeid(Ts).name()), ...);
-  //   println(out);
-  // }
-  template <typename T, typename F, typename... D>
-  static void registerRow(Dispatcher<D...> &dispatcher, F func) {
-    //(dispatcher.registerFunction(func.template operator()<T, Ts>()), ...);
-    (dispatcher
-         .template reg<const T, const Ts, func.template operator()<T, Ts>()>(),
-     ...);
-  }
-
-  template <typename F, typename... D>
-  static void registerWith(Dispatcher<D...> &dispatcher, F func) {
-    (registerRow<Ts>(dispatcher, func), ...);
-  }
-};
-
 int main() {
-
-  // DispatchHelper<TypeRegistrar<int, float, std::string>>::each(
-  //     []<typename T>() { println(typeid(T).name()); });
-
   Dispatcher<ShapeTypes, int, const Shape &, std::tuple<float, bool>,
              const Shape &, std::tuple<float, bool>>
       dispatcherFoo;
 
-  DispatchHelper<ShapeTypes>::registerWith(
-      dispatcherFoo, []<typename A, typename B>() { return &shapeFoo<A, B>; });
-
-  // dispatcherFoo.registerFunction(&shapeFoo<Circle, Circle>);
-  // dispatcherFoo.registerFunction(&shapeFoo<Wall, Circle>);
-  // dispatcherFoo.registerFunction(&shapeFoo<Polygon, Polygon>);
-
-  // const auto lalalala = []<typename A, typename B>() { return shapeFoo<A, B>;
-  // }; dispatcherFoo.reg<const Circle, const Circle,
-  //                   lalalala.template operator()<Circle, Circle>()>();
-
-  // DispatchHelper<ShapeTypes>::foo();
+  // dispatcherFoo.registerWith(
+  //     []<typename A, typename B>() { return &shapeFoo<A, B>; });
 
   Wall x;
   Circle a;
@@ -136,22 +84,4 @@ int main() {
   dispatcherFoo(i, 0, 0, x, 0, 0);
   dispatcherFoo(i, 0, 0, a, 0, 0);
   dispatcherFoo(i, 0, 0, i, 0, 0);
-
-  // dispatcherFoo(a, 1.4f, false, b, 39.001f, false);
-  // dispatcherFoo(x, -914.49f, true, b, 4.4424245f, false);
-  // dispatcherFoo(b, 123, true, x, 57, false);
-  // dispatcherFoo(i, 9, true, j, 0, true);
-  // shapeFoo(i, 9, true, j, 0, true);
-
-  // const auto l = []<typename A, typename B>() { return &shapeFoo<A, B>; };
-  // const auto lala = l.template operator()<Circle, Circle>();
-  //  l.template operator()<int, int>();
-
-  // iterTuple<ShapeTypes::TypeTuple>();
-
-  // float barA = barC<barbar>(1);
-  // float barB = barD<barbar>(2);
-
-  //  Foo<void, int, std::tuple<float, float>, bool, std::tuple<bool>> bar;
-  //  bar.func = &foo;
 }

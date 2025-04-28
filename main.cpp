@@ -62,9 +62,17 @@ int shapeFoo<Polygon, Polygon>(const Polygon &a, float x, bool y,
 }
 
 int main() {
-  Dispatcher<ShapeTypes, int, const Shape &, std::tuple<float, bool>,
-             const Shape &, std::tuple<float, bool>>
-      dispatcherFoo;
+  // static constexpr auto dispatcherFoo =
+  //     Dispatcher<ShapeTypes, int, const Shape &, std::tuple<float, bool>,
+  //                const Shape &,
+  //                std::tuple<float, bool>>::create([]<typename A, typename
+  //                B>() {
+  //       return &shapeFoo<A, B>;
+  //     });
+  static constexpr Dispatcher<ShapeTypes, int, const Shape &,
+                              std::tuple<float, bool>, const Shape &,
+                              std::tuple<float, bool>>
+      dispatcherFoo{[]<typename A, typename B>() { return &shapeFoo<A, B>; }};
 
   // dispatcherFoo.registerWith(
   //     []<typename A, typename B>() { return &shapeFoo<A, B>; });

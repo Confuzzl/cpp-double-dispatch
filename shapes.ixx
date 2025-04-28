@@ -4,7 +4,7 @@ import dispatcher;
 
 export {
   struct Shape {
-    unsigned long long type;
+    TypeSizeType type;
 
     template <typename T> Shape(const T *);
   };
@@ -21,4 +21,6 @@ export {
   using ShapeTypes = TypeRegistrar<Wall, Circle, Polygon>;
   template <typename T>
   Shape::Shape(const T *) : type{ShapeTypes::getIndex<T>()} {}
+
+  template <> TypeSizeType getType<Shape>(const Shape &s) { return s.type; }
 }
